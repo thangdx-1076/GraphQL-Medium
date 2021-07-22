@@ -1,18 +1,40 @@
 import {Friends,Series} from '../db/dbConnector.js'
 
+import {PubSub, withFilter} from 'graphql-subscriptions'
 /**
 * GraphQL Resolvers 
 **/
 
+
+            const pubsub = new PubSub();
+
+             let currentNumber = 0;
 export const resolvers={
+    Subscription:{
+        getNumberFriend: {
+       
+        subscribe: (_,params,context) => {
+
+                setInterval(()=>{
+                currentNumber++;
+                    pubsub.publish("NUMBER_INCREMENTED", { getNumberFriend: currentNumber });
+            }, 1000);
+            return pubsub.asyncIterator("NUMBER_INCREMENTED")
+        },},
+        numberIncremented: {
+        subscribe: () => pubsub.asyncIterator(["NUMBER_INCREMENTED"]),
+      },
+    },
     Query:{
             getAllFriend:(root)=>{
+                throw "error"
                 return new Promise((resolve,reject)=>{
                     Friends.find((err,friends)=>{
                         if(err) reject(err);
                         else resolve(friends);
                     })
                 })
+
             },
             findASeries:(root,{id})=>{
                 return new Promise((resolve,reject)=>{
@@ -25,6 +47,7 @@ export const resolvers={
     },
     Mutation:{
         createFriend: (root,{ input }) => {
+            console.log('input', input)
             const newFriend=new Friends({
                 firstName : input.firstName,
                 lastName : input.lastName,
@@ -45,6 +68,7 @@ export const resolvers={
             })
         },
         addASeries:(root,{series})=>{
+            console.log('series', series)
             const newSeries=new Series({
                 seriesName:series.seriesName,
                 year:series.year,
@@ -60,5 +84,9 @@ export const resolvers={
                 })
             })
         },
+        test:(root, data) => {
+            console.log(data)
+        }
     },
+    
 };

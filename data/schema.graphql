@@ -67,6 +67,14 @@ export const typeDefs = gql`
     type Mutation{
         createFriend(input:FriendInput):Friend
         addASeries(series:SeriesInput):Series
+        test(data: Int):Contact
+    }
+    input Name {
+        name: String
+    }
+    type Subscription{
+        getNumberFriend: Int
+        numberIncremented: Int
     }
 
 `;

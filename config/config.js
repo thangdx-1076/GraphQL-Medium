@@ -1,4 +1,4 @@
-export const PORT = 8080;
+export const PORT = 7070;
 export const environment = {
     development: {
         serverURL: `http://localhost:${PORT}/`,
